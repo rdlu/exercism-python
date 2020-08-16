@@ -9,4 +9,4 @@ def personal_best(scores):
 
 
 def personal_top_three(scores):
-    return list(islice(reversed(sorted(scores)), 0, 3))
+    return sorted(scores, reverse=True)[:3]
