@@ -1,17 +1,10 @@
-class Matrix(object):
+class Matrix:
     def __init__(self, matrix_string):
-        self._matrix = [list(map(int, r.split())) for r in matrix_string.split('\n')]
-
-    @property
-    def rows(self):
-        return self._matrix[:]
-
-    @property
-    def columns(self):
-        return list(map(list, zip(*self._matrix)))
-
+        self.matrix = [[int(value) for value in row_string.split()] 
+            for row_string in matrix_string.split("\n")]
+ 
     def row(self, index):
-        return self.rows[index-1]
+        return self.matrix[index - 1]
 
     def column(self, index):
-        return self.columns[index-1]
+        return [row[index - 1] for row in self.matrix]
