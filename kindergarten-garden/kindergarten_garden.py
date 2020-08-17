@@ -14,8 +14,8 @@ class Garden:
         self._students = sorted(students)
 
     def plants(self, student: str) -> list:
-        return [self._plants_table[initial] for initial in self._get_initials(student)]
+        return [self._plants_table[initial] for initial in self._initials(student)]
 
-    def _get_initials(self, student: str) -> list:
+    def _initials(self, student: str) -> list:
         idx = self._students.index(student) * 2
         return [initial for row in self.diagram for initial in row[idx:idx+2]]
