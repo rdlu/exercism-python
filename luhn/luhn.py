@@ -11,10 +11,8 @@ class Luhn:
             return False
         
     def _sum_card(self) -> int:
-        card_sum = 0
+        even_digits_sum = 0
         for digit in self._even_digits:
-            current_digit = int(digit) * 2
-            if current_digit > 9:
-                current_digit -= 9
-            card_sum += current_digit
-        return card_sum + sum([int(x) for x in self._odd_digits])
+            x = int(digit) * 2
+            even_digits_sum += x if x <= 9 else x - 9
+        return even_digits_sum + sum([int(x) for x in self._odd_digits])
