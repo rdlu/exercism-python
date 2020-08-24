@@ -1,5 +1,7 @@
 import re
 
+# tested the expression here: https://regex101.com/
+
 def match_strong(text: str) -> str:
     ## inline, so anything around __xxx__
     return re.sub(r'__(.+?)__', r'<strong>\1</strong>', text)
