@@ -1,5 +1,5 @@
 class Clock:
-    def __init__(self, hour, minutes):
+    def __init__(self, hour: int, minutes: int):
         self._minutes = (minutes + 60 * hour) % (60*24)
 
     def __repr__(self) -> str:
