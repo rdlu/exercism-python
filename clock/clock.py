@@ -3,7 +3,7 @@ class Clock:
         self._minutes = (minutes + 60 * hour) % (60*24)
 
     def __repr__(self) -> str:
-        return "{}:{}".format(str(self._minutes // 60).zfill(2), str(self._minutes % 60).zfill(2))
+        return "{:02d}:{:02d}".format(*divmod(self._minutes, 60))
 
     def __eq__(self, other: 'Clock') -> bool:
         return repr(self) == repr(other)
