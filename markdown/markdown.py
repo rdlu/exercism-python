@@ -13,7 +13,7 @@ def match_li(text: str) -> str:
     return re.sub(r'^\* (.+?$)', r'<li>\1</li>', text, flags=re.MULTILINE)
 
 def match_header(text: str) -> str:
-    # from h1 to h7, break line matters = re.MULTILINE
+    # from h1 to h6, break line matters = re.MULTILINE
     for i in range(1, 7):
         text = re.sub(r'^{} (.*?$)'.format('#' * i), r'<h{0}>\1</h{0}>'.format(i), text, flags=re.MULTILINE)
     return text
