@@ -1,72 +1,47 @@
 import re
 
-def match_header(line: str) -> str:
-    match = re.match('(#{0,6}) (.*)', line)
-    if match:
-        return "<h{lvl}>{body}</h{lvl}>".format(lvl=len(match[1]), body=match[2])
-    else:
-        return line
+def match_strong(text: str) -> str:
+    ## inline, so anything around __xxx__
+    return re.sub(r'__(.+?)__', r'<strong>\1</strong>', text)
 
-def parse(markdown):
-    lines = markdown.split('\n')
-    res = ''
-    in_list = False
-    in_list_append = False
-    for i in lines:
-        i = match_header(i)
-        m = re.match(r'\* (.*)', i)
-        if m:
-            if not in_list:
-                in_list = True
-                is_bold = False
-                is_italic = False
-                curr = m.group(1)
-                m1 = re.match('(.*)__(.*)__(.*)', curr)
-                if m1:
-                    curr = m1.group(1) + '<strong>' + \
-                        m1.group(2) + '</strong>' + m1.group(3)
-                    is_bold = True
-                m1 = re.match('(.*)_(.*)_(.*)', curr)
-                if m1:
-                    curr = m1.group(1) + '<em>' + m1.group(2) + \
-                        '</em>' + m1.group(3)
-                    is_italic = True
-                i = '<ul><li>' + curr + '</li>'
-            else:
-                is_bold = False
-                is_italic = False
-                curr = m.group(1)
-                m1 = re.match('(.*)__(.*)__(.*)', curr)
-                if m1:
-                    is_bold = True
-                m1 = re.match('(.*)_(.*)_(.*)', curr)
-                if m1:
-                    is_italic = True
-                if is_bold:
-                    curr = m1.group(1) + '<strong>' + \
-                        m1.group(2) + '</strong>' + m1.group(3)
-                if is_italic:
-                    curr = m1.group(1) + '<em>' + m1.group(2) + \
-                        '</em>' + m1.group(3)
-                i = '<li>' + curr + '</li>'
-        else:
-            if in_list:
-                in_list_append = True
-                in_list = False
+def match_em(text: str) -> str:
+    ## inline, so anything around _xxx_
+    return re.sub(r'_(.+?)_', r'<em>\1</em>', text)
 
-        m = re.match('<h|<ul|<p|<li', i)
-        if not m:
-            i = '<p>' + i + '</p>'
-        m = re.match('(.*)__(.*)__(.*)', i)
-        if m:
-            i = m.group(1) + '<strong>' + m.group(2) + '</strong>' + m.group(3)
-        m = re.match('(.*)_(.*)_(.*)', i)
-        if m:
-            i = m.group(1) + '<em>' + m.group(2) + '</em>' + m.group(3)
-        if in_list_append:
-            i = '</ul>' + i
-            in_list_append = False
-        res += i
-    if in_list:
-        res += '</ul>'
-    return res
+def match_li(text: str) -> str:
+    # line item, break line matters = re.MULTILINE
+    return re.sub(r'^\* (.+?$)', r'<li>\1</li>', text, flags=re.MULTILINE)
+
+def match_header(text: str) -> str:
+    # from h1 to h7, break line matters = re.MULTILINE
+    for i in range(1, 7):
+        text = re.sub(r'^{} (.*?$)'.format('#' * i), r'<h{0}>\1</h{0}>'.format(i), text, flags=re.MULTILINE)
+    return text
+
+def match_list_group(text: str) -> str:
+    # engulfs li in ul for the entire text = re.DOTALL (grabs newlines)
+    # it can fail if multiple lists
+    return re.sub(r'(<li>.*</li>)', r'<ul>\1</ul>', text, flags=re.DOTALL)
+
+def match_paragraph(text: str) -> str:
+    # every line - EXCEPT line/block elements - is a paragraph, so re.MULTILINE
+    # not starts with <h?>, <li>, <ul>, so ?! = negation for the group
+    return re.sub(r'^(?!<[hlu])(.*?$)', r'<p>\1</p>', text, flags=re.MULTILINE)
+
+def parse(markdown: str) -> str:
+    html = markdown
+
+    # inline elements, order matters, precedence
+    html = match_strong(html)
+    html = match_em(html)
+
+    # line elements
+    html = match_li(html)
+    html = match_header(html)
+
+    # block elements
+    html = match_list_group(html)
+    html = match_paragraph(html)
+    html = html.replace('\n', '')
+
+    return html
