@@ -1,20 +1,27 @@
-# naive, remove from cart and add to bag
-# no consideration to different groupings
+# just rewrote this: https://exercism.io/tracks/python/exercises/book-store/solutions/736ace5096a74f079343773f0d13ad57
+# and made some comments for clarification
+# basically we need to simulate different sizes of bundles
+# BUT in this case the edge case [3, 5] is known
+# so this solution hardcodes that
 
-from collections import Counter, defaultdict
+from collections import Counter
 
-discounts = [0, 0, 0.05, 0.1, 0.2, 0.25]
-book_price = 800
+bundle_cost = [0, 800, 1520, 2160, 2560, 3000]
 
 def total(basket: list) -> int:
-    cart = Counter(basket)
-    total = 0
-    # strategy: remove different items from cart and sum
-    while len(cart) > 0:
-        discount_percentual = discounts[len(cart)]
-        discount_value = book_price * discount_percentual
-        total += len(cart) * (book_price - discount_value)
-        cart.subtract({item: 1 for item in cart.keys()})
-        cart += Counter() # remove zero and negative counts
+    books = Counter(basket)
+    bundles = []
 
-    return total
+    while bundle_size := len(books):
+        bundles.append(bundle_size)
+        books.subtract(books.keys())
+        books += Counter() # trick to remove zeroed items
+
+    # edge case for bundle (4,4) is cheaper than bundle (3,5)
+    # non scalable: if we add a bundle of 6, for instance, we will have new edge cases
+    while 3 in bundles and 5 in bundles:
+        bundles.remove(3)
+        bundles.remove(5)
+        bundles += [4, 4]
+
+    return sum([bundle_cost[size] for size in bundles])
