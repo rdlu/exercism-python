@@ -6,7 +6,7 @@ class Team():
         self.lost = 0
 
     def total_points(self) -> int:
-        return self.won * 3 + self.tied * 1 + self.lost * 0
+        return self.won * 3 + self.tied * 1
 
     def matches_played(self) -> int:
         return self.won + self.lost + self.tied
