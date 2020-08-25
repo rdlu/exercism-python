@@ -23,7 +23,7 @@ class Team():
         return f'{name:30} | {mp:2} | {w:2} | {d:2} | {l:2} | {p:2}'
 
 
-def tally(rows: list(str)) -> list(str):
+def tally(rows: list) -> list:
     totals = {}
     for line in rows:
         (home, away, result) = line.split(';')
