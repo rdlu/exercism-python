@@ -37,10 +37,10 @@ class User(object):
         }
 
 class RestAPI:
-    def __init__(self, database:dict=None):
+    def __init__(self, database:dict={}):
         self._database = {
             user['name']: User(**user)
-            for user in (database or {}).get('users', [])
+            for user in database.get('users', [])
         }
 
     def get(self, url: str, payload: str = '{}') -> str:
