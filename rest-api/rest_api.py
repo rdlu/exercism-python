@@ -74,14 +74,14 @@ class RestAPI:
         return user.__dict__
 
     def _iou_user(self, users_info: dict) -> dict:
-        lender = self._filter_users(users_info['lender'])[0]
-        borrower = self._filter_users(users_info['borrower'])[0]
+        lender = self._database[users_info['lender']]
+        borrower = self._database[users_info['borrower']]
         amount = users_info['amount']
         if lender and borrower:
-            lender['owed_by'][borrower['name']] = amount
-            lender['balance'] += amount
-            borrower['owes'][lender['name']] = amount
-            borrower['balance'] -= amount
-            return {'users': self._filter_users([borrower['name'], lender['name']])}
-        else:
-            return {}
+            lender.loan(borrower.name, amount)
+            borrower.borrow(lender.name, amount)
+            return {'users': sorted(
+                [lender.__dict__, borrower.__dict__],
+                key=lambda u: u['name']
+            )}
+        return {'users': []}
