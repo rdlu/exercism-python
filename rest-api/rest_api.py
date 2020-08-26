@@ -1,12 +1,12 @@
 import json
 
 class User(object):
-    def __init__(self, name, owed_by=None, owes=None, **kwargs):
+    def __init__(self, name, owed_by={}, owes={}, **kwargs):
         self.name = name
         self.records = {}
-        for borrower, amount in (owed_by or {}).items():
+        for borrower, amount in owed_by.items():
             self.loan(borrower, amount)
-        for lender, amount in (owes or {}).items():
+        for lender, amount in owes.items():
             self.borrow(lender, amount)
 
     def borrow(self, borrower, amount):
