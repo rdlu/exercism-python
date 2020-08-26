@@ -1,5 +1,4 @@
 import json
-from collections import defaultdict
 
 class User(object):
     def __init__(self, name, owed_by=None, owes=None, **kwargs):
