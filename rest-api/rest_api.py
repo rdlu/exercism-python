@@ -1,7 +1,7 @@
 import json
 
 class User(object):
-    def __init__(self, name, owed_by={}, owes={}, **kwargs):
+    def __init__(self, name:str, owed_by:dict={}, owes:dict={}, **kwargs):
         self.name = name
         self.records = {}
         for borrower, amount in owed_by.items():
@@ -9,22 +9,22 @@ class User(object):
         for lender, amount in owes.items():
             self.borrow(lender, amount)
 
-    def borrow(self, borrower, amount):
+    def borrow(self, borrower: str, amount:float) -> None:
         self.records[borrower] = self.records.get(borrower, 0) - amount
 
-    def loan(self, lender, amount):
+    def loan(self, lender, amount) -> None:
         self.records[lender] = self.records.get(lender, 0) + amount
 
     @property
-    def owes(self):
+    def owes(self) -> dict:
         return {k: -v for k, v in self.records.items() if v < 0}
 
     @property
-    def owed_by(self):
+    def owed_by(self) -> dict:
         return {k: v for k, v in self.records.items() if v > 0}
 
     @property
-    def balance(self):
+    def balance(self) -> float:
         return sum(self.records.values())
 
     @property
