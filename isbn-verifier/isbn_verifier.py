@@ -1,5 +1,5 @@
 def is_valid(isbn: str) -> bool:
-    # filter nums, convert to int
+    # filter nums, convert to list of int
     l = [int(x) for x in filter(str.isnumeric, isbn)]
     # handle the edge case: X
     if isbn and isbn[-1] == 'X': l.append(10)
