@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import timedelta
 
 def add(moment):
-    return datetime.fromtimestamp(datetime.timestamp(moment) + 1e9)
+    return moment + timedelta(seconds = 1e9)
