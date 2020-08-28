@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 
-def add(moment: 'datetime.datetime') -> 'datetime.datetime':
+def add(moment: datetime) -> datetime:
     return moment + timedelta(seconds = 1e9)
