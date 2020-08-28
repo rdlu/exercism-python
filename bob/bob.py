@@ -11,10 +11,10 @@ def response(hey_bob:str) -> str:
     return "Whatever."
 
 def is_question(q:str) -> bool:
-    return q and q[-1] == '?'
+    return q.endswith('?')
 
 def is_yell(q:str) -> bool:
-    return q.upper() == q and q.lower() != q
+    return q.isupper()
 
 def is_silence(q:str) -> bool:
     return q == ''
