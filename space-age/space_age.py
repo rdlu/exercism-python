@@ -14,10 +14,10 @@ class SpaceAge:
     def __init__(self, seconds: int):
         self.seconds = seconds
 
-    def calculate(self, planet: str):
+    def calculate(self, planet: str) -> float:
         return round(self.seconds / self.earth_year / self.orbital_periods[planet], 2)
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str):
         if not name[3:] in self.orbital_periods.keys():
             raise AttributeError("'tuple' object has no attribute '%s'" % name)
 
