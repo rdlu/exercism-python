@@ -1,30 +1,25 @@
-def decode(data: str) -> str:
-    decode = ''
-    count = ''
-    for char in data:
-        if char.isdigit():
-            count += char
-        else:
-            decode += char * int(count)
-            count = ''
-    return decode
+from itertools import groupby
 
+def decode(data):
+    decoded = ''
+    count = ''
+    for char, _group in groupby(data):
+        if char.isnumeric():
+            count += str(char)
+        elif not count:
+            decoded = str(char)
+        else:
+            decoded += str(int(count) * char)
+            count = ''
+    return decoded
 
 def encode(data: str) -> str:
-    encoding = ''
-    prev_char = ''
-    count = 1
+    encoded = ''
 
-    if not data: return ''
-
-    for char in data:
-        if char != prev_char:
-            if prev_char:
-                encoding += str(count) + prev_char
-            count = 1
-            prev_char = char
+    for char, group in groupby(data):
+        section_qty = sum(1 for _ in group)
+        if section_qty > 1:
+            encoded += f"{section_qty}{char}"
         else:
-            count += 1
-    else:
-        encoding += str(count) + prev_char
-        return encoding
+            encoded += char
+    return encoded
