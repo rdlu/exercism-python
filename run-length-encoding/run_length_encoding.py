@@ -1,13 +1,13 @@
 from itertools import groupby
 
-def decode(data):
+def decode(data: str) -> str:
     decoded = ''
     count = ''
     for char, _group in groupby(data):
         if char.isnumeric():
             count += str(char)
         elif not count:
-            decoded = str(char)
+            decoded += str(char)
         else:
             decoded += str(int(count) * char)
             count = ''
