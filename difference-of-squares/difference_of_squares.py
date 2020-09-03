@@ -4,7 +4,7 @@ def square_of_sum(n: int) -> int:
 
 # not used
 def sum_of_squares(n: int) -> int:
-    return sum(i ** 2 for i in range(1,n+1))
+    return sum(i**2 for i in range(1, n+1))
 
 # research: https://iq.opengenus.org/difference-between-square-of-sum-and-sum-of-squares/
 def difference_of_squares(n: int) -> int:
