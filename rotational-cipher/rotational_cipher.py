@@ -1,9 +1,7 @@
 def rotate(text: str, key: int) -> str:
     plain = 'abcdefghijklmnopqrstuvwxyz'
     rotated = rotate_left(plain, key)
-    plain_up = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    rotated_up = rotate_left(plain_up, key)
-    return text.translate(str.maketrans(plain+plain_up, rotated+rotated_up))
+    return text.translate(str.maketrans(plain+plain.upper(), rotated+rotated.upper()))
 
 def rotate_left(l: list, n: int):
     if not l: return l
