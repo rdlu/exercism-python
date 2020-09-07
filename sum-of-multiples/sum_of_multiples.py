@@ -1,4 +1,6 @@
 from typing import List
 
 def sum_of_multiples(limit: int, multiples: List[int]) -> int:
-    return sum([i for m in multiples for i in range(limit) if i % m == 0])
+    # set comprehension (not a list, to avoid repeated nums)
+    return sum({ i for m in multiples if m != 0
+        for i in range(m, limit, m) })
