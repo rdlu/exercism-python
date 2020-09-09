@@ -1,6 +1,6 @@
 from typing import List
 
-def find(search_list: List, value: int) -> int:
+def find(search_list: List[int], value: int) -> int:
     l = 0
     r = len(search_list) - 1
     while l <= r:
