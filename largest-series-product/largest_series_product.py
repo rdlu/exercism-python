@@ -2,8 +2,13 @@ from math import prod
 
 
 def largest_product(series: str, size: int) -> int:
-    """Largest Product takes a series of digits
-    and return the largest product within groups of size n"""
+    """Largest Series Product from strings
+
+    :param series: str: takes a series of digits
+    :param size: int: size of slices / groups / chunks
+    :returns: int: the largest product within groups of n size
+
+    """
     series_slices = slices(series, size)
     return max(prod(int(digit) for digit in subseries)
                for subseries in series_slices)
