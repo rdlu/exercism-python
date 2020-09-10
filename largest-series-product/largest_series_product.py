@@ -1,3 +1,4 @@
+from operator import mul
 from functools import reduce
 
 
@@ -5,7 +6,7 @@ def largest_product(series: str, size: int) -> int:
     """Largest Product takes a series of digits
     and return the largest product within groups of size n"""
     series_slices = slices(series, size)
-    return max(reduce(lambda acc, s: acc * int(s), subseries, 1)
+    return max(reduce(lambda acc, digit: mul(acc, int(digit)), subseries, 1)
                for subseries in series_slices)
 
 
