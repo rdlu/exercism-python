@@ -1,7 +1,9 @@
-from string import ascii_lowercase, punctuation, whitespace
+from string import ascii_lowercase, ascii_uppercase, punctuation, whitespace
 
 reverse_ci = ascii_lowercase[::-1]
-trans_engine = str.maketrans(ascii_lowercase, reverse_ci, punctuation + whitespace)
+trans_engine = str.maketrans(ascii_lowercase + ascii_uppercase,
+                             reverse_ci + reverse_ci,   # + to handle uppercase
+                             punctuation + whitespace)  # chars to remove
 
 
 def encode(plain_text: str) -> str:
@@ -15,7 +17,7 @@ def decode(ciphered_text: str) -> str:
 
 
 def _translate(text: str) -> str:
-    return text.lower().translate(trans_engine)
+    return text.translate(trans_engine)
 
 
 def _chunk_text(text: str, size: int = 5) -> str:
