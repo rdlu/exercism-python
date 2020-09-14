@@ -7,7 +7,7 @@ def maximum_value(maximum_weight: int, items: List[Dict]) -> int:
 
     for n in range(1, len(items) + 1):
         for w in range(1, maximum_weight + 1):
-            calculate_max(n, w, items, memo)
+            memo[n][w] = calculate_max(n, w, items, memo)
 
     return memo[len(items)][maximum_weight]
 
@@ -15,9 +15,5 @@ def maximum_value(maximum_weight: int, items: List[Dict]) -> int:
 def calculate_max(n: int, w: int, items: List[Dict], memo: List[List[int]]) -> int:
     wi = items[n - 1]['weight']
     vi = items[n - 1]['value']
-    if wi <= w:
-        memo[n][w] = max(vi + memo[n - 1][w - wi], memo[n - 1][w])
-    else:
-        memo[n][w] = memo[n - 1][w]
-
-    return memo[n][w]
+    return max(vi + memo[n - 1][w - wi], memo[n - 1][w]) \
+        if wi <= w else memo[n - 1][w]
