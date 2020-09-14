@@ -3,7 +3,7 @@ from typing import List, Dict
 
 
 def maximum_value(maximum_weight: int, items: List[Dict]) -> int:
-    memo = [[0 for j in range(maximum_weight + 1)] for i in range(0, len(items) + 1)]
+    memo = [[0 for _ in range(maximum_weight + 1)] for _ in range(0, len(items) + 1)]
 
     for n in range(1, len(items) + 1):
         for w in range(1, maximum_weight + 1):
