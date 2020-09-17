@@ -1,7 +1,19 @@
+# TODO: Running tests individually it pass, when running all at once it fails with Lists Differ (pytest 6 / python 3.8)
+
 NODE, EDGE, ATTR = range(3)
 
 
-class Node:
+class Component(object):
+    _schema = NotImplemented
+
+    @classmethod
+    def validate(cls, args):
+        return all(isinstance(a, t) for a, t in zip(args, cls._schema))
+
+
+class Node(Component):
+    _schema = (str, (dict, set))
+
     def __init__(self, name, attrs):
         self.name = name
         self.attrs = attrs
@@ -10,7 +22,9 @@ class Node:
         return self.name == other.name and self.attrs == other.attrs
 
 
-class Edge:
+class Edge(Component):
+    _schema = (str, str, dict)
+
     def __init__(self, src, dst, attrs):
         self.src = src
         self.dst = dst
@@ -22,42 +36,43 @@ class Edge:
                 and self.attrs == other.attrs)
 
 
+class Attr(Component):
+    _schema = (str, str)
+
+    def __init__(self, key, value):
+        self.kv = (key, value)
+
+
 class Graph:
     edges = []
     nodes = []
-    attrs = {}
+    _attrs = []
+
+    _graph = {
+        NODE: (Node, nodes),
+        EDGE: (Edge, edges),
+        ATTR: (Attr, _attrs),
+    }
 
     def __init__(self, data=[]):
-        if not isinstance(data, list):
-            raise TypeError('data must be a list')
+        if not self._valid_data(data):
+            raise TypeError('Invalid DSL')
 
         for tup in data:
-            if len(tup) != 3 and len(tup) != 4:
-                raise TypeError('input is wrong')
+            entity, args = tup[0], tup[1:]
+            try:
+                cls, storage = self._graph[entity]
+            except KeyError:
+                raise ValueError('Invalid graph entity `{}`'.format(entity))
 
-            if tup[0] == ATTR:
-                self.attrs.update(create_attr(tup[1:]))
-            elif tup[0] == NODE:
-                self.nodes.append(create_node(tup[1:]))
-            elif tup[0] == EDGE:
-                self.edges.append(create_edge(tup[1:]))
-            else:
-                raise ValueError('unknown item')
+            if not cls.validate(args):
+                raise ValueError('Invalid {}'.format(cls.__name__))
 
+            storage.append(cls(*args))
 
-def create_attr(inputs):
-    if not all(isinstance(x, str) for x in inputs):
-        raise ValueError('inputs are wrong')
-    return {inputs[0]: inputs[1]}
+    @property
+    def attrs(self):
+        return dict(a.kv for a in self._attrs)
 
-
-def create_node(inputs):
-    if not isinstance(inputs[0], str) or not isinstance(inputs[1], dict):
-        raise ValueError('inputs are wrong')
-    return Node(inputs[0], inputs[1])
-
-
-def create_edge(inputs):
-    if not (isinstance(inputs[0], str) and isinstance(inputs[1], str)) or not isinstance(inputs[2], dict):
-        raise ValueError('inputs are wrong')
-    return Edge(inputs[0], inputs[1], inputs[2])
+    def _valid_data(self, data):
+        return all(isinstance(x, tuple) and len(x) > 0 for x in data)
