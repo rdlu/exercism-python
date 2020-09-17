@@ -4,7 +4,7 @@ from itertools import cycle
 
 def factors(number: int) -> List[int]:
     # stole from: https://exercism.io/tracks/python/exercises/prime-factors/solutions/f524e783960d5b1b1fddb271
-    """Factors returns all clean divisors of a number"""
+    """Factors returns all clean divisors of a number, fastest version"""
     return list(generate_prime_factors(number))
 
 
@@ -30,7 +30,7 @@ def generate_factor_candidates():
 
 
 def naive_factors(value: int) -> List[int]:
-    """Factors returns all clean divisors of a number"""
+    """Factors returns all clean divisors of a number, naive version"""
     factors = []
     divisor = 2
     while value > 1:
