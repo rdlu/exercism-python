@@ -1,44 +1,66 @@
-import string
+from functools import lru_cache
+from math import gcd
+from string import ascii_lowercase
 
-alphabet = string.ascii_lowercase
+alphabet = ascii_lowercase
+m = len(alphabet)
+
+
+def validate_a(a: int):
+    if gcd(a, m) > 1:
+        raise ValueError("a and m must be coprime.")
+
+
+def ord_(char):
+    return alphabet.index(char)
+
+
+def chr_(num):
+    return alphabet[num]
+
+
+@lru_cache
+def mmi(a: int) -> int:
+    """Returns the result of a ** -1, using integers only"""
+    for n in range(1, m):
+        if (a * n) % m == 1:
+            return n
+    return 1
 
 
 def encode(plain_text: str, a: int, b: int) -> str:
     """Encode the text using affine cipher"""
+    validate_a(a)
+
+    def cipher(char: str) -> str:
+        if char in alphabet:
+            return chr_((a * ord_(char) + b) % m)
+        if char.isdigit():
+            return char
+        return ''
+
     return chunk_text(
-        ''.join(affine_encode(char, a, b)
-                for char in plain_text.lower().replace(' ', '')))
-
-
-def affine_encode(char: str, a: int, b: int) -> str:
-    """Encodes a single char using affine encode formula
-        Formula: E(x) = (ax + b) mod m
-    """
-    if char in alphabet:
-        return alphabet[(a * alphabet.index(char) + b) % len(alphabet)]
-    if char in string.digits:
-        return char
-    return ''
+        ''.join(cipher(char) for char in plain_text.lower().replace(' ', '')))
 
 
 def chunk_text(text: str, size: int = 5) -> str:
+    """Utility function to put spaces on strings at each size"""
     if len(text) <= size:
         return text
     return text[:size] + " " + chunk_text(text[size:])
 
 
 def decode(ciphered_text: str, a: int, b: int):
-    return ''.join(affine_decode(char, a, b)
+    """Encode the text using affine cipher"""
+    validate_a(a)
+
+    def decipher(char: str) -> str:
+        if char in alphabet:
+            num = mmi(a) * (ord_(char) - b) % m
+            return chr_(num)
+        if char.isdigit():
+            return char
+        return ''
+
+    return ''.join(decipher(char)
                    for char in ciphered_text.lower().replace(' ', ''))
-
-
-def affine_decode(char: str, a: int, b: int) -> str:
-    """Decodes a single char using affine decode formula
-        D(y) = a^-1(y - b) mod m
-    """
-    if char in alphabet:
-        num = int(((a ** -1) * (alphabet.index(char) - b)) % len(alphabet))
-        return alphabet[num]
-    if char in string.digits:
-        return char
-    return ''
