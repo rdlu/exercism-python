@@ -2,6 +2,7 @@ from typing import List
 
 
 def factors(value: int) -> List[int]:
+    """Factors returns all clean divisors of a number"""
     factors = []
     divisor = 2
     current_value = value
