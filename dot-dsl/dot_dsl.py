@@ -59,16 +59,16 @@ class Graph:
             raise TypeError('Invalid DSL')
 
         for tup in data:
-            entity, args = tup[0], tup[1:]
+            entity_type, args = tup[0], tup[1:]
             try:
-                cls, storage = self._graph[entity]
+                entity, storage = self._graph[entity_type]
             except KeyError:
-                raise ValueError('Invalid graph entity `{}`'.format(entity))
+                raise ValueError('Invalid graph entity `{}`'.format(entity_type))
 
-            if not cls.validate(args):
-                raise ValueError('Invalid {}'.format(cls.__name__))
+            if not entity.validate(args):
+                raise ValueError('Invalid {}'.format(entity.__name__))
 
-            storage.append(cls(*args))
+            storage.append(entity(*args))
 
     @property
     def attrs(self):
