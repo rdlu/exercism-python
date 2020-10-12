@@ -17,19 +17,21 @@ def create_entry(date, description, change):
     return entry
 
 
-def format_entries(currency, locale, entries):
-    if locale == 'en_US':
-        # Generate Header Row
-        table = 'Date'
-        for _ in range(7):
-            table += ' '
-        table += '| Description'
-        for _ in range(15):
-            table += ' '
-        table += '| Change'
-        for _ in range(7):
-            table += ' '
+LOCALES = {
+    'en_US': {
+        'headers': ['Date', 'Description', 'Change']
+    },
+    'nl_NL': {
+        'headers': ['Datum', 'Omschrijving', 'Verandering']
+    }
+}
 
+
+def format_entries(currency, locale, entries):
+    locale_opts = LOCALES[locale]
+    header_fmt = '{:10} | {:25} | {:13}'.format(*locale_opts['headers'])
+    table = header_fmt
+    if locale == 'en_US':
         while len(entries) > 0:
             table += '\n'
 
@@ -45,15 +47,15 @@ def format_entries(currency, locale, entries):
                     min_entry_index = i
                     continue
                 if (
-                    entry.date == min_entry.date and
-                    entry.change < min_entry.change
+                        entry.date == min_entry.date and
+                        entry.change < min_entry.change
                 ):
                     min_entry_index = i
                     continue
                 if (
-                    entry.date == min_entry.date and
-                    entry.change == min_entry.change and
-                    entry.description < min_entry.description
+                        entry.date == min_entry.date and
+                        entry.change == min_entry.change and
+                        entry.description < min_entry.description
                 ):
                     min_entry_index = i
                     continue
@@ -162,17 +164,6 @@ def format_entries(currency, locale, entries):
                 table += change_str
         return table
     elif locale == 'nl_NL':
-        # Generate Header Row
-        table = 'Datum'
-        for _ in range(6):
-            table += ' '
-        table += '| Omschrijving'
-        for _ in range(14):
-            table += ' '
-        table += '| Verandering'
-        for _ in range(2):
-            table += ' '
-
         while len(entries) > 0:
             table += '\n'
 
@@ -188,15 +179,15 @@ def format_entries(currency, locale, entries):
                     min_entry_index = i
                     continue
                 if (
-                    entry.date == min_entry.date and
-                    entry.change < min_entry.change
+                        entry.date == min_entry.date and
+                        entry.change < min_entry.change
                 ):
                     min_entry_index = i
                     continue
                 if (
-                    entry.date == min_entry.date and
-                    entry.change == min_entry.change and
-                    entry.description < min_entry.description
+                        entry.date == min_entry.date and
+                        entry.change == min_entry.change and
+                        entry.description < min_entry.description
                 ):
                     min_entry_index = i
                     continue
