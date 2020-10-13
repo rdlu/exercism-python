@@ -8,6 +8,9 @@ class LedgerEntry:
         self.description = None
         self.change = None
 
+    def __lt__(self, other):
+        return (self.date, self.change, self.description) < (other.date, other.change, other.description)
+
 
 def create_entry(date, description, change):
     entry = LedgerEntry()
@@ -31,34 +34,13 @@ def format_entries(currency, locale, entries):
     locale_opts = LOCALES[locale]
     header_fmt = '{:10} | {:25} | {:13}'.format(*locale_opts['headers'])
     table = header_fmt
+    entries = sorted(entries)
     if locale == 'en_US':
         while len(entries) > 0:
             table += '\n'
 
             # Find next entry in order
-            min_entry_index = -1
-            for i in range(len(entries)):
-                entry = entries[i]
-                if min_entry_index < 0:
-                    min_entry_index = i
-                    continue
-                min_entry = entries[min_entry_index]
-                if entry.date < min_entry.date:
-                    min_entry_index = i
-                    continue
-                if (
-                        entry.date == min_entry.date and
-                        entry.change < min_entry.change
-                ):
-                    min_entry_index = i
-                    continue
-                if (
-                        entry.date == min_entry.date and
-                        entry.change == min_entry.change and
-                        entry.description < min_entry.description
-                ):
-                    min_entry_index = i
-                    continue
+            min_entry_index = 0
             entry = entries[min_entry_index]
             entries.pop(min_entry_index)
 
@@ -168,29 +150,7 @@ def format_entries(currency, locale, entries):
             table += '\n'
 
             # Find next entry in order
-            min_entry_index = -1
-            for i in range(len(entries)):
-                entry = entries[i]
-                if min_entry_index < 0:
-                    min_entry_index = i
-                    continue
-                min_entry = entries[min_entry_index]
-                if entry.date < min_entry.date:
-                    min_entry_index = i
-                    continue
-                if (
-                        entry.date == min_entry.date and
-                        entry.change < min_entry.change
-                ):
-                    min_entry_index = i
-                    continue
-                if (
-                        entry.date == min_entry.date and
-                        entry.change == min_entry.change and
-                        entry.description < min_entry.description
-                ):
-                    min_entry_index = i
-                    continue
+            min_entry_index = 0
             entry = entries[min_entry_index]
             entries.pop(min_entry_index)
 
