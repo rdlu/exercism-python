@@ -23,12 +23,21 @@ def create_entry(date, description, change):
 LOCALES = {
     'en_US': {
         'headers': ['Date', 'Description', 'Change'],
-        'date': '%m/%d/%Y'
+        'date': '%m/%d/%Y',
+        'money': lambda cents, symbol: (lambda value: f'({value})' if cents < 0 else f'{value} ')
+                                       (f'{symbol}{abs(cents)/100:,.2f}')
     },
     'nl_NL': {
         'headers': ['Datum', 'Omschrijving', 'Verandering'],
-        'date': '%d-%m-%Y'
+        'date': '%d-%m-%Y',
+        'money': lambda cents, symbol: f'{symbol} {cents/100:_.2f} '.replace('.', ',').replace('_', '.')
+
     }
+}
+
+CURRENCY_SYMBOL = {
+    'USD': '$',
+    'EUR': '€'
 }
 
 
@@ -65,70 +74,10 @@ def format_entries(currency, locale, entries):
             table += ' | '
 
             # Write entry change to table
-            if currency == 'USD':
-                change_str = ''
-                if entry.change < 0:
-                    change_str = '('
-                change_str += '$'
-                change_dollar = abs(int(entry.change / 100.0))
-                dollar_parts = []
-                while change_dollar > 0:
-                    dollar_parts.insert(0, str(change_dollar % 1000))
-                    change_dollar = change_dollar // 1000
-                if len(dollar_parts) == 0:
-                    change_str += '0'
-                else:
-                    while True:
-                        change_str += dollar_parts[0]
-                        dollar_parts.pop(0)
-                        if len(dollar_parts) == 0:
-                            break
-                        change_str += ','
-                change_str += '.'
-                change_cents = abs(entry.change) % 100
-                change_cents = str(change_cents)
-                if len(change_cents) < 2:
-                    change_cents = '0' + change_cents
-                change_str += change_cents
-                if entry.change < 0:
-                    change_str += ')'
-                else:
-                    change_str += ' '
-                while len(change_str) < 13:
-                    change_str = ' ' + change_str
-                table += change_str
-            elif currency == 'EUR':
-                change_str = ''
-                if entry.change < 0:
-                    change_str = '('
-                change_str += u'€'
-                change_euro = abs(int(entry.change / 100.0))
-                euro_parts = []
-                while change_euro > 0:
-                    euro_parts.insert(0, str(change_euro % 1000))
-                    change_euro = change_euro // 1000
-                if len(euro_parts) == 0:
-                    change_str += '0'
-                else:
-                    while True:
-                        change_str += euro_parts[0]
-                        euro_parts.pop(0)
-                        if len(euro_parts) == 0:
-                            break
-                        change_str += ','
-                change_str += '.'
-                change_cents = abs(entry.change) % 100
-                change_cents = str(change_cents)
-                if len(change_cents) < 2:
-                    change_cents = '0' + change_cents
-                change_str += change_cents
-                if entry.change < 0:
-                    change_str += ')'
-                else:
-                    change_str += ' '
-                while len(change_str) < 13:
-                    change_str = ' ' + change_str
-                table += change_str
+            change_str = locale_opts['money'](entry.change, CURRENCY_SYMBOL[currency])
+            while len(change_str) < 13:
+                change_str = ' ' + change_str
+            table += change_str
         return table
     elif locale == 'nl_NL':
         while len(entries) > 0:
