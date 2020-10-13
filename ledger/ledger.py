@@ -43,38 +43,13 @@ CURRENCY_SYMBOL = {
 
 def format_entries(currency, locale, entries):
     locale_opts = LOCALES[locale]
-    header_fmt = '{:10} | {:25} | {:13}'.format(*locale_opts['headers'])
-    table = header_fmt
-    entries = sorted(entries)
-    while len(entries) > 0:
-        table += '\n'
+    header = '{:10} | {:25} | {:13}'.format(*locale_opts['headers'])
 
-        # Find next entry in order
-        min_entry_index = 0
-        entry = entries[min_entry_index]
-        entries.pop(min_entry_index)
+    def row_fmt(entry):
+        date = entry.date.strftime(locale_opts['date'])
+        description = entry.description[:22] + '...' if len(entry.description) > 25 else entry.description
+        change = locale_opts['money'](entry.change, CURRENCY_SYMBOL[currency])
+        return '{:10} | {:25} | {:>13}'.format(date, description, change)
 
-        # Write entry date to table
-        table += entry.date.strftime(locale_opts['date'])
-        table += ' | '
-
-        # Write entry description to table
-        # Truncate if necessary
-        if len(entry.description) > 25:
-            for i in range(22):
-                table += entry.description[i]
-            table += '...'
-        else:
-            for i in range(25):
-                if len(entry.description) > i:
-                    table += entry.description[i]
-                else:
-                    table += ' '
-        table += ' | '
-
-        # Write entry change to table
-        change_str = locale_opts['money'](entry.change, CURRENCY_SYMBOL[currency])
-        while len(change_str) < 13:
-            change_str = ' ' + change_str
-        table += change_str
-    return table
+    rows = [row_fmt(entry) for entry in sorted(entries)]
+    return '\n'.join([header, *rows])
