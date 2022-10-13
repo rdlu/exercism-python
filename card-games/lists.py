@@ -11,7 +11,7 @@ def get_rounds(number):
     :return: list - current round and the two that follow.
     """
 
-    return [i for i in range(number, number + 3)]
+    return list(range(number, number + 3))
 
 
 def concatenate_rounds(rounds_1, rounds_2):
@@ -54,7 +54,7 @@ def approx_average_is_average(hand):
     """
     avg = card_average(hand)
     mid = len(hand) // 2
-    return ((hand[0] + hand[-1]) / 2 == avg) or (hand[mid] == avg)
+    return avg in [(hand[0] + hand[-1]) / 2, hand[mid]]
 
 
 def average_even_is_average_odd(hand):
