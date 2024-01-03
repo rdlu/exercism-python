@@ -127,4 +127,4 @@ def singleton_ingredients(dishes, intersection):
     for dish in dishes[1:]:
         diff_dishes.symmetric_difference_update(dish)
 
-    return (diff_dishes ^ intersection) - intersection
+    return diff_dishes - intersection
