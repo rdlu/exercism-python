@@ -1,3 +1,5 @@
+import itertools
+
 """Functions to automate Conda airlines ticketing system."""
 
 
@@ -34,21 +36,10 @@ def generate_seats(number):
     Example: 3C, 3D, 4A, 4B
 
     """
-    row = 1
-    count = 0
-
-    while count < number:
-        if row == 13:
-            row += 1
-            continue
-
-        for letter in generate_seat_letters(4):
-            if count == number:
-                break
-            yield f"{row}{letter}"
-            count += 1
-
-        row += 1
+    rows = (row for row in itertools.count(start=1) if row != 13 for _ in range(4))
+    letters = generate_seat_letters(number)
+    for row, letter in zip(rows, letters):
+        yield f"{row}{letter}"
 
 
 def assign_seats(passengers):
@@ -73,6 +64,4 @@ def generate_codes(seat_numbers, flight_id):
 
     """
     for seat in seat_numbers:
-        code = f"{seat}{flight_id}"
-        code += "0" * (12 - len(code))
-        yield code
+        yield f"{seat}{flight_id}".ljust(12, "0")
